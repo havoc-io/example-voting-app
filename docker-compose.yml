@@ -1,13 +1,11 @@
-version: "3"
+version: "3.7"
 
 services:
   vote:
     build: ./vote
     command: python app.py
     volumes:
-     - ./vote:/app
-    ports:
-      - "5000:80"
+     - vote-code:/app
     networks:
       - front-tier
       - back-tier
@@ -16,10 +14,7 @@ services:
     build: ./result
     command: nodemon server.js
     volumes:
-      - ./result:/app
-    ports:
-      - "5001:80"
-      - "5858:5858"
+      - result-code:/app
     networks:
       - front-tier
       - back-tier
@@ -53,7 +48,34 @@ services:
 
 volumes:
   db-data:
+  vote-code:
+  result-code:
 
 networks:
   front-tier:
   back-tier:
+
+x-mutagen:
+  sync:
+    defaults:
+      ignore:
+        vcs: true
+    vote:
+      alpha: "./vote"
+      beta: "volume://vote-code"
+      mode: "one-way-safe"
+    result:
+      alpha: "./result"
+      beta: "volume://result-code"
+      mode: "one-way-safe"
+      configurationBeta:
+        permissions:
+          defaultOwner: "id:1000"
+          defaultGroup: "id:1000"
+  forward:
+    vote:
+      source: "tcp::5000"
+      destination: "network://front-tier:tcp:vote:80"
+    result:
+      source: "tcp::5001"
+      destination: "network://front-tier:tcp:result:80"

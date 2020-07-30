@@ -3,6 +3,12 @@ Example Voting App
 
 A simple distributed application running across multiple Docker containers.
 
+**NOTE**: This example has been modified to support integration with
+[Mutagen](https://mutagen.io), allowing the application to be run on a remote
+Docker host while still being edited and accessed locally. For more information,
+please see the
+[relevant documentation](https://mutagen.io/documentation/orchestration/compose).
+
 Getting started
 ---------------
 
